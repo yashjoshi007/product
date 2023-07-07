@@ -1,0 +1,50 @@
+<!-- addproductactivity.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Product Name"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editTextProductType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextProductName"
+        android:layout_marginTop="16dp"
+        android:hint="Product Type"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editTextPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextProductType"
+        android:layout_marginTop="16dp"
+        android:hint="Selling Price"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/editTextTax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPrice"
+        android:layout_marginTop="16dp"
+        android:hint="Tax Rate"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/buttonAddProduct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextTax"
+        android:layout_marginTop="16dp"
+        android:text="Add Product" />
+
+</RelativeLayout>

@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Add code to navigate to the com.example.myapplication.ProductListActivity when needed
+        // Add code to navigate to the com.example.myapplication.com.example.myapplication.ProductListActivity when needed
         // For example, you can add a button in the activity_main.xml file
         val productListButton: Button = findViewById(R.id.productListButton)
         productListButton.setOnClickListener {

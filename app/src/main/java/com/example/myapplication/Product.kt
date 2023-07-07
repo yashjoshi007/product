@@ -1,5 +1,8 @@
 package com.example.myapp.models
 
+import com.google.gson.annotations.SerializedName
+import java.io.File
+
 data class Product(
     val product_name: String,
     val product_type: String,
@@ -18,9 +21,24 @@ data class Product(
 }
 
 data class Product1(
-    val type: String,
-    val name: String,
-    val sellingPrice: Float,
-    val taxRate: Float
+    @SerializedName("product_type")
+    val productType: String,
+
+    @SerializedName("product_name")
+    val productName: String,
+
+    @SerializedName("price")
+    val price: String,
+
+    @SerializedName("tax")
+    val tax: String,
+
+    val image: String? = null
 )
+
+
+
+
+
+
 

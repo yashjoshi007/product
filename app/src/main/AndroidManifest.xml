@@ -20,15 +20,11 @@
             android:exported="true">
             <!-- Intent filters and other activity attributes -->
         </activity>
-
         <activity
             android:name=".AddProductActivity"
             android:exported="true">
             <!-- Intent filters and other activity attributes -->
         </activity>
-
-
-
 
 
         <activity android:name=".MainActivity"

@@ -1,90 +1,81 @@
 package com.example.myapplication
 
-import ProductService
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Spinner
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapp.models.Product1
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import android.widget.Toast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import okhttp3.*
+import java.io.IOException
 
 class AddProductActivity : AppCompatActivity() {
-    private lateinit var spinnerProductType: Spinner
-    private lateinit var editTextProductName: EditText
-    private lateinit var editTextSellingPrice: EditText
-    private lateinit var editTextTaxRate: EditText
-    private lateinit var buttonAddProduct: Button
-
-    private val productTypes = arrayOf("Electronic", "Product", "Toy") // Replace with your actual product types
+    private val client = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_product)
+        setContentView(R.layout.addproductactivity)
 
-        spinnerProductType = findViewById(R.id.spinnerProductType)
-        editTextProductName = findViewById(R.id.editTextProductName)
-        editTextSellingPrice = findViewById(R.id.editTextSellingPrice)
-        editTextTaxRate = findViewById(R.id.editTextTaxRate)
-        buttonAddProduct = findViewById(R.id.buttonAddProduct)
-
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, productTypes)
-        spinnerProductType.adapter = adapter
+        val buttonAddProduct = findViewById<Button>(R.id.buttonAddProduct)
+        val editTextProductName = findViewById<EditText>(R.id.editTextProductName)
+        val editTextProductType = findViewById<EditText>(R.id.editTextProductType)
+        val editTextPrice = findViewById<EditText>(R.id.editTextPrice)
+        val editTextTax = findViewById<EditText>(R.id.editTextTax)
 
         buttonAddProduct.setOnClickListener {
-            addProduct()
+            val productName = editTextProductName.text.toString()
+            val productType = editTextProductType.text.toString()
+            val price = editTextPrice.text.toString()
+            val tax = editTextTax.text.toString()
+
+            addProduct(productName, productType, price, tax)
         }
     }
 
-    private fun addProduct() {
-        // ...
-        val productType = spinnerProductType.selectedItem.toString()
-        val productName = editTextProductName.text.toString().trim()
-        val sellingPrice = editTextSellingPrice.text.toString().toFloatOrNull()
-        val taxRate = editTextTaxRate.text.toString().toFloatOrNull()
 
-        // Create Retrofit instance
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://app.getswipe.in/")
-            .addConverterFactory(GsonConverterFactory.create())
+    private fun addProduct(
+        productName: String,
+        productType: String,
+        price: String,
+        tax: String
+    ) {
+        val url = "https://app.getswipe.in/api/public/add"
+
+        val requestBody = FormBody.Builder()
+            .add("product_name", productName)
+            .add("product_type", productType)
+            .add("price", price)
+            .add("tax", tax)
             .build()
 
-        // Create the ProductService instance
-        val productService = retrofit.create(ProductService::class.java)
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
 
-        // Create the Product object
-        val product = Product1(productType, productName, sellingPrice!!, taxRate!!)
-
-        // Make the API call
-        val call = productService.addProduct(product)
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    // Display success message
-                    Toast.makeText(this@AddProductActivity, "Product added successfully", Toast.LENGTH_SHORT).show()
-
-                    // Reset the fields
-                    spinnerProductType.setSelection(0)
-                    editTextProductName.text.clear()
-                    editTextSellingPrice.text.clear()
-                    editTextTaxRate.text.clear()
-                } else {
-                    // Display error message
-                    Toast.makeText(this@AddProductActivity, "Failed to add product", Toast.LENGTH_SHORT).show()
+        try {
+            val response = runBlocking {
+                withContext(Dispatchers.IO) {
+                    client.newCall(request).execute()
                 }
             }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                // Display error message
-                Toast.makeText(this@AddProductActivity, "Failed to add product: ${t.message}", Toast.LENGTH_SHORT).show()
+            // Handle the response as needed
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string()
+                showToast("Product added successfully. Response: $responseBody")
+            } else {
+                showToast("Failed to add product. Response code: ${response.code}")
             }
-        })
+        } catch (e: IOException) {
+            e.printStackTrace()
+            showToast("Error: ${e.message}")
+        }
     }
-
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 }
+
